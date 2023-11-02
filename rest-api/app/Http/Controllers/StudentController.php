@@ -12,14 +12,18 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $student = Student::all();
+        try {
+            $student = Student::all();
 
-        $data = [
-            'message' => 'Get all Student',
-            'data' => $student
-        ];
+            $data = [
+                "message" => "Get All Users",
+                "data" => $student
+            ];
 
-        return response()->json($data, 200);
+            return response()->json($data, 200);
+        } catch (\Throwable $th) {
+            return response()->json(["message" => "error", "error" => $th]);
+        }
     }
 
     /**
@@ -27,22 +31,25 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $input = [
-            'nama'=> $request->nama,
-            'nim' => $request->nim,
-            'email' => $request->email,
-            'jurusan' => $request->jurusan
-        ];
+        try {
+            $input = [
+                'nama' => $request->nama,
+                'nim' => $request->nim,
+                'email' => $request->email,
+                'jurusan' => $request->jurusan
+            ];
 
-        $student = Student::create($input);
+            $students = Student::create($input);
 
-        $data = [
-            'message' => 'Student is created succesfully',
-            'data' => $student,
-        ];
+            $data = [
+                'message' => 'Student is created successfully',
+                'data' => $students
+            ];
 
-      return response()->json($data, 201);  
-
+            return response()->json($data, 201);
+        } catch (\Throwable $th) {
+            return response()->json(["message" => "error"]);
+        }
     }
 
     /**
@@ -50,7 +57,7 @@ class StudentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        
     }
 
     /**
@@ -58,7 +65,21 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $id = (int) $id;
+        $input = [
+            'nama' => $request->nama,
+            'nim' => $request->nim,
+            'email' => $request->email,
+            'jurusan' => $request->jurusan
+        ];
+        $student = Student::find($id)->update($input);
+
+        $data = [
+            'message' => "Student is updated successfully",
+            'data' => $student
+        ];
+
+        return response()->json($data,200);
     }
 
     /**
@@ -66,6 +87,14 @@ class StudentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $id = (int) $id;
+        $student = Student::destroy($id);
+
+        $data = [
+            'message' => "deleted Student issss successfully",
+            'data' => $student
+        ];
+
+        return response()->json($data,200);
     }
 }
