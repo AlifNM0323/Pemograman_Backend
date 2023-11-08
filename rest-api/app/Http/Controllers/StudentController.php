@@ -57,7 +57,23 @@ class StudentController extends Controller
      */
     public function show(string $id)
     {
-        
+        try {
+            $data = Student::find($id);
+            if ($data) {
+                $result = [
+                    'message' => "success get data",
+                    'data' => $data
+                ];
+            }else{
+                $result = [
+                    'message' => 'failed to get data',
+                    'data' => 'data not found'
+                ];
+            }
+            return response()->json($result,200);
+        } catch (\Throwable $th) {
+            return response()->json(["message"=>"error","error"=>$th],500);
+        }
     }
 
     /**
