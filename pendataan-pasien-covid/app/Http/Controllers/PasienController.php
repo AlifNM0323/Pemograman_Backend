@@ -18,14 +18,7 @@ class PasienController extends Controller
     {
         try {
 
-            // untuk filter menggunakan 
-            // filter[nama]
-            // filter[sort]
-            // filter[order]
-
-            // untuk paging menggunakan
-            // page[limit]
-            // page[number]
+         
             
             foreach ($request->all() as $key => $value) {
                 $$key = $value;
@@ -37,7 +30,7 @@ class PasienController extends Controller
             }
             $sort = (isset($filter['sort'])) ? $filter['sort'] : NULL;
             if ($sort == NULL) {
-                $sort = 'nama';
+                $sort = 'name';
             }
             $pageLimit = (isset($page['limit'])) ? $page['limit'] : 5;
             $pageNumber = (isset($page['number'])) ? $page['number'] : 1;
@@ -46,20 +39,20 @@ class PasienController extends Controller
             $pages['pageLimit'] = (int) $pageLimit;
             $pages['pageNumber'] = (int) $pageNumber;
 
-            $students = Pasien::query();
-            $name = (isset($filter['nama'])) ? $filter['nama'] : NULL;
+            $pasiens = Pasien::query();
+            $name = (isset($filter['name'])) ? $filter['name'] : NULL;
             if ($name != NULL) {
-                $students = $students->where('nama',$name);
+                $pasiens = $pasiens->where('name',$name);
             }
 
-            $students = $students->orderBy($sort,$order)->offset($offset)
+            $pasiens = $pasiens->orderBy($sort,$order)->offset($offset)
                         ->limit($pageLimit)->get();
 
             // get total
             $studentTotal = Pasien::query();
-            $name = (isset($filter['nama'])) ? $filter['nama'] : NULL;
+            $name = (isset($filter['name'])) ? $filter['name'] : NULL;
             if ($name != NULL) {
-                $studentTotal = $studentTotal->where('nama',$name);
+                $studentTotal = $studentTotal->where('name',$name);
             }
 
             $pageLimit = (isset($page['limit'])) ? $page['limit'] : 5;
@@ -74,9 +67,9 @@ class PasienController extends Controller
             
             $data = [];
             $data['pages'] = $pages;
-            $data['table'] = $students;
+            $data['table'] = $pasiens;
             
-            if (count($students) > 0) {
+            if (count($pasiens) > 0) {
                 $result = [
                     "message" => "Success Get All Users",
                     "data" => $data
@@ -118,7 +111,6 @@ class PasienController extends Controller
             ]);
 
             if($validator->fails()){
-                // var_dump($validator->fails());
                 foreach ($validator->errors()->messages() as $key => $value) {
                     return response()->json(["message"=>"failed Added Data","error"=>$value[0]]);       
                 }
@@ -133,11 +125,11 @@ class PasienController extends Controller
                 'out_date_at'=> $request->out_date_at
             ];
     
-            $students = Pasien::create($input);
+            $pasiens = Pasien::create($input);
     
             $data = [
                 'message' => 'Student is created successfully',
-                'data' => $students
+                'data' => $pasiens
             ];
     
             return response()->json($data,201);
