@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string("name");
             $table->string("phone",50);
             $table->text("address");
-            $table->integer("status_id");
+            $table->string("status");
+            $table->date("in_date_at");
+            $table->date("out_date_at")->nullable();
             $table->timestamps();
         });
     }

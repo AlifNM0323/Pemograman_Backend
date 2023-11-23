@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\StatusPasien;
 
 class Pasien extends Model
 {
@@ -15,7 +14,9 @@ class Pasien extends Model
         'name',
         'phone',
         'address',
-        'status_id',
+        'status',
+        'in_date_at',
+        'out_date_at',
         'created_at', '
         updated_at'
     ];

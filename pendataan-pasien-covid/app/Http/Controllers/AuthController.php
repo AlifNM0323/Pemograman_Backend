@@ -56,17 +56,4 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Tokens revoked successfully']);
     }
-    //     $user = Auth::user();
-
-    //     if ($user) {
-    //         $user->tokens()->delete();
-    //         return [
-    //             'message' => 'You have successfully logged out, and the token was successfully deleted'
-    //         ];
-    //     } else {
-    //         return [
-    //             'message' => 'No authenticated user found',
-    //         ];
-    //     }
-    // }
 }
