@@ -7,13 +7,11 @@ const sequelize = new Sequelize({
   database: 'nama_database',
   username: 'nama_pengguna',
   password: 'kata_sandi',
-  host: 'localhost',
-  dialect: 'mysql', // Ubah 'mysql2' menjadi 'mysql'
+  host: '127.0.0.1',
+  dialect: 'mysql',
 });
 
 export default sequelize;
-
-
 
 
 // sequelize.sync({ force: true }).then(() => {

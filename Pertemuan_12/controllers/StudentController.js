@@ -11,6 +11,8 @@ StudentController.index = async (req,res) => {
             data : students
         }
         res.json(data)
+
+
     } catch (error) {
         const data = {
             message : "Error"
@@ -42,7 +44,7 @@ StudentController.store = async (req,res) => {
         res.status(201).json(data);
     } catch (error) {
         console.error("Error creating student:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+              res.status(500).json({ error: "Internal Server Error" });
     }
 }
 
@@ -67,7 +69,7 @@ StudentController.update = async (req,res) => {
 
         const fieldsToUpdate = {
             nama: nama || studentToUpdate.name,
-            nim: nim || studentToUpdate.nim,
+                    nim: nim || studentToUpdate.nim,
             email: email || studentToUpdate.email,
             jurusan: jurusan || studentToUpdate.jurusan,
         };
@@ -81,7 +83,7 @@ StudentController.update = async (req,res) => {
 
         res.status(200).json(data);
     } catch (error) {
-        console.error("Error updating student:", error);
+                 console.error("Error updating student:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
@@ -96,19 +98,20 @@ StudentController.delete = async (req,res) => {
             }
         });
 
-        if (!studentToDelete) {
+
+            if (!studentToDelete) {
             return res.status(404).json({ error: "Student not found" });
         }
 
         let data =  {
-            message : "Student deleted Successfully",
+             message : "Student deleted Successfully",
         }
 
         await studentToDelete.destroy();
 
-        res.status(200).json(data);
-    } catch (error) {
-        console.error("Error deleting student:", error);
+                res.status(200).json(data);
+    }   catch (error) {
+                     console.error("Error deleting student:", error);
             res.status(500).json({ error: "Internal Server Error" });
     }
 }
