@@ -5,20 +5,20 @@ let StudentController = {}
 StudentController.index = async (req,res) => {
 
     try {
-        const students = await Student.findAll()
+        const Student = await Student.findAll()
+        
         const data = {
-            message : "Show All Data Students",
-            data : students
+            message : "Tampilkan Semua Data Students",
+            data : Student
         }
         res.json(data)
-
-
-    } catch (error) {
+    } 
+    
+    catch (error) {
         const data = {
             message : "Error"
         }
-        console.error("Error get Data User : "+error)
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error Saat Menambahkan Data User : "+error); res.status(900).json({ error: "Server Error" });
     }
 }
 
@@ -27,24 +27,26 @@ StudentController.store = async (req,res) => {
         const { nama, nim, email, jurusan } = req.body;
 
         if (!nama || !nim || !email || !jurusan) {
-            return res.status(400).json({ error: "All fields are required" });
+            return res.status(400).json({ error: "All required" });
+        }
+
+        const checkNimStudent = await Student.findOne({
+        where:{nim : nim}
+        })
+
+        console.log(checkNimStudent)
+        if(checkNimStudent != null){
+            return res.status(400).json({error : "Nim Sudah Tersedia"})
         }
 
         const newStudent = await Student.create({
-            nama : nama,
-            nim : nim,
-            email : email,
-            jurusan : jurusan,
+            nama : nama, nim : nim, email : email, jurusan : jurusan,
         });
 
-        let data =  {
-            message : "Student Created Successfullt",
-            data : newStudent
-        }
+        let data =  {message : "Menambahkan Data Studends Sukses", data : newStudent
+        } 
         res.status(201).json(data);
-    } catch (error) {
-        console.error("Error creating student:", error);
-              res.status(500).json({ error: "Internal Server Error" });
+    } catch (error) {console.error("Error creating student:", error);res.status(500).json({ error: "Internal Server Error" });
     }
 }
 
@@ -56,35 +58,32 @@ StudentController.update = async (req,res) => {
         if (!nama && !nim && !email && !jurusan) {
             return res.status(400).json({ error: "At least one field is required for update" });
         }
+        
 
-        const studentToUpdate = await Student.findOne({
-            where: {
-                id: id,
-            }
-        });
+        const studentUpdate = await Student.findByPk(id);
 
-        if (!studentToUpdate) {
+        if (studentUpdate == null) {
             return res.status(404).json({ error: "Student not found" });
         }
 
         const fieldsToUpdate = {
-            nama: nama || studentToUpdate.name,
-                    nim: nim || studentToUpdate.nim,
-            email: email || studentToUpdate.email,
-            jurusan: jurusan || studentToUpdate.jurusan,
+            nama: nama || studentUpdate.name,
+            nim: nim || studentUpdate.nim,
+            email: email || studentUpdate.email,
+            jurusan: jurusan || studentUpdate.jurusan,
         };
 
         let data =  {
-            message : "Student Updated Successfully",
+            message : "Update Sukses",
             data : fieldsToUpdate
         }
         
-        await studentToUpdate.update(fieldsToUpdate);
+        await studentUpdate.update(fieldsToUpdate);
 
         res.status(200).json(data);
     } catch (error) {
-                 console.error("Error updating student:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error saat update:", error);
+        res.status(500).json({ error: "Server Error" });
     }
 }
 
@@ -92,27 +91,21 @@ StudentController.delete = async (req,res) => {
     try {
         const { id } = req.params;
         
-        const studentToDelete = await Student.findOne({
-            where: {
-                id: id,
-            }
-        });
+        const studentToDelete = await Student.findByPk(id);
 
-
-            if (!studentToDelete) {
-            return res.status(404).json({ error: "Student not found" });
+        if (studentUpdate == null) {
+            return res.status(404).json({ error: "Tidak Tampil" });
         }
 
-        let data =  {
-             message : "Student deleted Successfully",
+        let data =  {message : "Student deleted Successfully",
         }
 
         await studentToDelete.destroy();
 
-                res.status(200).json(data);
-    }   catch (error) {
-                     console.error("Error deleting student:", error);
-            res.status(500).json({ error: "Internal Server Error" });
+        res.status(200).json(data);
+    } catch (error) {
+        console.error("Error saat delete:", error);
+            res.status(500).json({ error: "Server Error" });
     }
 }
 
