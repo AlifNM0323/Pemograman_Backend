@@ -1,77 +1,112 @@
+import students from "../models/students.js";
 
-const models = require('../models/students');
+let StudentController = {}
 
-class StudentController {
-    index(req, res) {
-        const response = {
-            message: "Get All Students",
-            data: models,
-        };
+StudentController.index = async (req,res) => {
 
-        res.json(response);
-    }
-
-    store(req, res) {
-        try {
-            const { name } = req.body;
-            const getIndexID = models.length + 1;
-            const student = { id: getIndexID, name: name };
-            models.push(student);
-            const response = {
-                message: `Add Data Students New ${name}`,
-                data: models,
-            };
-
-            res.json(response);
-        } catch (error) {
-            console.log(error);
-            res.json({ error: "Gagal Untuk Menambahkan Data" });
+    try {
+        const students = await students.findAll()
+        
+        const data = {
+            message : "Tampilkan Semua Data Students",
+            data : students
         }
-    }
-
-    update(req, res) {
-        try {
-            const { id } = req.params;
-            const { name } = req.body;
-
-            const updatedModels = models.map(student => {
-                if (student.id == id) {
-                    return { ...student, name: name };
-                }
-                return student;
-            });
-
-            const response = {
-                message: `Updated Data Students id ${id}`,
-                data: updatedModels,
-            };
-
-            res.json(response);
-        } catch (error) {
-            console.log(error);
-            res.json({ error: "Gagal Untuk Updated Data" });
+        res.json(data)
+    } 
+    
+    catch (error) {
+        const data = {
+            message : "Error"
         }
-    }
-
-    destroy(req, res) {
-        try {
-            const { id } = req.params;
-
-            const filteredModels = models.filter(student => student.id != id);
-
-            const response = {
-                message: "Berhasil Deleted Data",
-                data: filteredModels,
-            };
-
-            res.json(response);
-        } catch (error) {
-            console.log(error);
-            res.json({ error: "Gagal Untuk Deleted Data" });
-        }
+        console.error("Error Saat Menambahkan Data User : "+error); res.status(900).json({ error: "Server Error" });
     }
 }
 
-const controllers = new StudentController();
+StudentController.store = async (req,res) => {
+    try {
+        const { nama, nim, email, jurusan } = req.body;
 
-module.exports = controllers;
+        if (!nama || !nim || !email || !jurusan) {
+            return res.status(400).json({ error: "All required" });
+        }
+
+        const checkNimStudent = await students.findOne({
+        where:{nim : nim}
+        })
+
+        console.log(checkNimStudent)
+        if(checkNimStudent != null){
+            return res.status(400).json({error : "Nim Sudah Tersedia"})
+        }
+
+        const newStudent = await students.create({
+            nama : nama, nim : nim, email : email, jurusan : jurusan,
+        });
+
+        let data =  {message : "Menambahkan Data Studends Sukses", data : newStudent
+        } 
+        res.status(201).json(data);
+    } catch (error) {console.error("Error creating student:", error);res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+StudentController.update = async (req,res) => {
+    try {
+        const { id } = req.params;
+        const { nama, nim, email, jurusan } = req.body;
+
+        if (!nama && !nim && !email && !jurusan) {
+            return res.status(400).json({ error: "At least one field is required for update" });
+        }
+        
+
+        const studentToUpdate = await students.findByPk(id);
+
+        if (studentToUpdate == null) {
+            return res.status(404).json({ error: "students not found" });
+        }
+
+        const fieldsToUpdate = {
+            nama: nama || studentToUpdate.name,
+            nim: nim || studentToUpdate.nim,
+            email: email || studentToUpdate.email,
+            jurusan: jurusan || studentToUpdate.jurusan,
+        };
+
+        let data =  {
+            message : "Update Sukses",
+            data : fieldsToUpdate
+        }
+        
+        await studentToUpdate.update(fieldsToUpdate);
+
+        res.status(200).json(data);
+    } catch (error) {
+        console.error("Error saat update:", error);
+        res.status(500).json({ error: "Server Error" });
+    }
+}
+
+StudentController.delete = async (req,res) => {
+    try {
+        const { id } = req.params;
+        
+        const studentToDelete = await students.findByPk(id);
+
+        if (studentToUpdate == null) {
+            return res.status(404).json({ error: "Tidak Tampil" });
+        }
+
+        let data =  {message : "students deleted Successfully",
+        }
+
+        await studentToDelete.destroy();
+
+        res.status(200).json(data);
+    } catch (error) {
+        console.error("Error saat delete:", error);
+            res.status(500).json({ error: "Server Error" });
+    }
+}
+
+export default StudentController
