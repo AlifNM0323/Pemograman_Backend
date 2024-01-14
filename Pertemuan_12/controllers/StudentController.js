@@ -22,33 +22,35 @@ StudentController.index = async (req,res) => {
     }
 }
 
-StudentController.store = async (req,res) => {
+
+StudentController.store = async (req,res) =>  {
     try {
-        const { nama, nim, email, jurusan } = req.body;
-
-        if (!nama || !nim || !email || !jurusan) {
-            return res.status(400).json({ error: "All required" });
-        }
-
-        const checkNimStudent = await Student.findOne({
-        where:{nim : nim}
-        })
-
-        console.log(checkNimStudent)
-        if(checkNimStudent != null){
-            return res.status(400).json({error : "Nim Sudah Tersedia"})
-        }
-
-        const newStudent = await Student.create({
-            nama : nama, nim : nim, email : email, jurusan : jurusan,
-        });
-
-        let data =  {message : "Menambahkan Data Studends Sukses", data : newStudent
-        } 
-        res.status(201).json(data);
-    } catch (error) {console.error("Error creating student:", error);res.status(500).json({ error: "Internal Server Error" });
+      const { nama, nim, email, jurusan } = req.body;
+  
+      // Memastikan semua data terkirim
+      if (!nama || !nim || !email || !jurusan) {
+        const data = {
+          message: "Semua Data Harus Dikirim",
+        };
+        return res.status(422).json(data);
+      }
+  
+      // Membuat data student baru
+      const student = await Student.create({ nama, nim, email, jurusan });
+  
+      // Menyusun respons
+      const data = {
+        message: "Menambahkan Data Student",
+        data: student,
+      };
+  
+      // Mengirim respons berhasil
+      return res.status(201).json(data);
+    } catch (error) {
+      // Mengirim respons jika terjadi kesalahan
+      return res.status(500).json({ message: "Terjadi kesalahan server", error: error.message });
     }
-}
+  }
 
 StudentController.update = async (req,res) => {
     try {
@@ -110,3 +112,4 @@ StudentController.delete = async (req,res) => {
 }
 
 export default StudentController
+
