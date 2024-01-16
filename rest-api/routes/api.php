@@ -25,14 +25,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get('/animals',[AnimalController::class,'index']);
-    
     Route::post('/animals', [AnimalController::class,'store']);
-    
     Route::put('/animals/{id}', [AnimalController::class,'update']);
-    
     Route::delete('/animals/{id}', [AnimalController::class,'destroy']);
     
-    
+    // Student
     Route::get('/students',[StudentController::class,'index']);
     Route::get('/students/{id}',[StudentController::class,'show']);
     Route::post('/students',[StudentController::class,'store']);
