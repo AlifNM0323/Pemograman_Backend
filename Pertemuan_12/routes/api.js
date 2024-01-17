@@ -9,9 +9,9 @@ router.get('/students', auth, StudentController.index);
 const router = express.Router();
 
 import StudentController from '../controllers/StudentController.js'
-router.get('/students',StudentController.index)
-router.post('/students',StudentController.store)
-router.put('/students/:id',StudentController.update)
-router.delete('/students/:id',StudentController.delete)
+router.get('/students',StudentController.displayAllStudents)
+router.post('/students',StudentController.addStudent)
+router.put('/students/:id',StudentController.updateStudent)
+router.delete('/students/:id',StudentController.removeStudent)
 
 export default router;
