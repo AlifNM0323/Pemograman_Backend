@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Models\Pasien;
-// use App\Models\StatusPasien;
-// use App\Models\StatusPasien;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -32,7 +30,7 @@ class PasienController extends Controller
             if ($sort == NULL) {
                 $sort = 'name';
             }
-            $pageLimit = (isset($page['limit'])) ? $page['limit'] : 5;
+            $pageLimit = (isset($page['limit'])) ? $page['limit'] : 8;
             $pageNumber = (isset($page['number'])) ? $page['number'] : 1;
             $offset = ($pageNumber - 1) * $pageLimit;
             $pages = [];
