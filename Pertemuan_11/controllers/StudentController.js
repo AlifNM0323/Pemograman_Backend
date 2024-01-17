@@ -1,112 +1,76 @@
-import students from "../models/students.js";
+import models from '../models/students.js';
 
-let StudentController = {}
+const controllers = {};
 
-StudentController.index = async (req,res) => {
-
+controllers.index = (req, res) => {
     try {
-        const students = await students.findAll()
-        
-        const data = {
-            message : "Tampilkan Semua Data Students",
-            data : students
-        }
-        res.json(data)
-    } 
-    
-    catch (error) {
-        const data = {
-            message : "Error"
-        }
-        console.error("Error Saat Menambahkan Data User : "+error); res.status(900).json({ error: "Server Error" });
-    }
-}
-
-StudentController.store = async (req,res) => {
-    try {
-        const { nama, nim, email, jurusan } = req.body;
-
-        if (!nama || !nim || !email || !jurusan) {
-            return res.status(400).json({ error: "All required" });
-        }
-
-        const checkNimStudent = await students.findOne({
-        where:{nim : nim}
-        })
-
-        console.log(checkNimStudent)
-        if(checkNimStudent != null){
-            return res.status(400).json({error : "Nim Sudah Tersedia"})
-        }
-
-        const newStudent = await students.create({
-            nama : nama, nim : nim, email : email, jurusan : jurusan,
-        });
-
-        let data =  {message : "Menambahkan Data Studends Sukses", data : newStudent
-        } 
-        res.status(201).json(data);
-    } catch (error) {console.error("Error creating student:", error);res.status(500).json({ error: "Internal Server Error" });
-    }
-}
-
-StudentController.update = async (req,res) => {
-    try {
-        const { id } = req.params;
-        const { nama, nim, email, jurusan } = req.body;
-
-        if (!nama && !nim && !email && !jurusan) {
-            return res.status(400).json({ error: "At least one field is required for update" });
-        }
-        
-
-        const studentToUpdate = await students.findByPk(id);
-
-        if (studentToUpdate == null) {
-            return res.status(404).json({ error: "students not found" });
-        }
-
-        const fieldsToUpdate = {
-            nama: nama || studentToUpdate.name,
-            nim: nim || studentToUpdate.nim,
-            email: email || studentToUpdate.email,
-            jurusan: jurusan || studentToUpdate.jurusan,
+        let response = {
+            "message": "Get All Students",
+            "data": models,
         };
 
-        let data =  {
-            message : "Update Sukses",
-            data : fieldsToUpdate
-        }
-        
-        await studentToUpdate.update(fieldsToUpdate);
-
-        res.status(200).json(data);
+        res.json(response);
     } catch (error) {
-        console.error("Error saat update:", error);
-        res.status(500).json({ error: "Server Error" });
+        console.log(error);
+        res.json({ "error": "Failed to fetch data" });
     }
-}
+};
 
-StudentController.delete = async (req,res) => {
+controllers.store = (req, res) => {
+    try {
+        const { name } = req.body;
+        const getIndexID = models.length + 1;
+        const student = { "id": getIndexID, "name": name };
+        models.push(student);
+        let response = {
+            "message": `Add Data Students ${name}`,
+            "data": models,
+        };
+
+        res.json(response);
+    } catch (error) {
+        console.log(error);
+        res.json({ "error": "Failed to add data" });
+    }
+};
+
+controllers.update = (req, res) => {
     try {
         const { id } = req.params;
-        
-        const studentToDelete = await students.findByPk(id);
-
-        if (studentToUpdate == null) {
-            return res.status(404).json({ error: "Tidak Tampil" });
+        const { name } = req.body;
+        for (let index = 0; index < models.length; index++) {
+            if (models[index].id == id) {
+                models[index].name = name;
+            }
         }
+        let response = {
+            "message": `Updated Data Students id ${id}`,
+            "data": models,
+        };
 
-        let data =  {message : "students deleted Successfully",
-        }
-
-        await studentToDelete.destroy();
-
-        res.status(200).json(data);
+        res.json(response);
     } catch (error) {
-        console.error("Error saat delete:", error);
-            res.status(500).json({ error: "Server Error" });
+        console.log(error);
+        res.json({ "error": "Failed to update data" });
     }
-}
+};
 
-export default StudentController
+controllers.destroy = (req, res) => {
+    try {
+        const { id } = req.params;
+        for (let index = 0; index < models.length; index++) {
+            if (models[index].id == id) {
+                models.splice(index, 1);
+            }
+        }
+        let response = {
+            "message": "Success Deleted Data",
+        };
+        res.json(response);
+    } catch (error) {
+        console.log(error);
+        res.json({ "error": "Failed to delete data" });
+    }
+};
+
+export default controllers;
