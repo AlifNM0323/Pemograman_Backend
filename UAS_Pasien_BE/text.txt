@@ -1,0 +1,18 @@
+ {
+            "id": 1,
+            "name": "Rifky",
+            "phone": 2147483647,
+            "address": "Bogor",
+            "in_date_at": "2024-09-18T00:00:00.000Z",
+            "out_date_at": "2024-10-28T00:00:00.000Z",
+            "timestamp": "17:00:00",
+            "statusId": 1,
+            "createdAt": "2024-01-19T20:21:48.000Z",
+            "updatedAt": "2024-01-19T20:21:48.000Z",
+            "status": {
+                "id": 1,
+                "status": "sembuh",
+                "createdAt": "2024-01-19T20:21:48.000Z",
+                "updatedAt": "2024-01-19T20:21:48.000Z"
+            }
+        },

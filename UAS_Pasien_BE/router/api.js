@@ -18,9 +18,10 @@ router.post("/login", AuthController.login);
 
 
 router.get("/patients", auth, patientsController.index);
-router.get("/patients/:id", auth, patientsController.get);
 router.post("/patients", auth, patientsController.store);
 router.get("/patients/specific", auth, patientsController.specific);
+
+router.get("/patients/:id", auth, patientsController.get);
 router.put("/patients/:id", auth, patientsController.update);
 router.delete("/patients/:id", auth, patientsController.destroy);
 
