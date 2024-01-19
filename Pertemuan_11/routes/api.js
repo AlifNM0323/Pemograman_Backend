@@ -3,7 +3,7 @@ const router = express.Router()
 const StudentController = require('../controllers/StudentController')
 
 router.get("/",(req,res)=>{
-    res.send("Hello Expres")
+    res.send("")
 })
 
 router.get('/students',StudentController.index)
