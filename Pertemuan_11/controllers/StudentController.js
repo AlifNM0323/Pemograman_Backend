@@ -5,14 +5,14 @@ const controllers = {};
 controllers.index = (req, res) => {
     try {
         let response = {
-            "message": "Get All Students",
+            "message": "Get Students",
             "data": models,
         };
 
         res.json(response);
     } catch (error) {
         console.log(error);
-        res.json({ "error": "Failed to fetch data" });
+        res.json({ "error": "Failed to data" });
     }
 };
 
@@ -30,7 +30,7 @@ controllers.store = (req, res) => {
         res.json(response);
     } catch (error) {
         console.log(error);
-        res.json({ "error": "Failed to add data" });
+        res.json({ "error": "Failed to data" });
     }
 };
 
@@ -59,17 +59,16 @@ controllers.destroy = (req, res) => {
     try {
         const { id } = req.params;
         for (let index = 0; index < models.length; index++) {
-            if (models[index].id == id) {
-                models.splice(index, 1);
+            if (models[index].id == id) {models.splice(index, 1);
             }
         }
         let response = {
-            "message": "Success Deleted Data",
+            "message": "Success Deleted",
         };
         res.json(response);
     } catch (error) {
         console.log(error);
-        res.json({ "error": "Failed to delete data" });
+        res.json({ "error": "Failed to delete" });
     }
 };
 
