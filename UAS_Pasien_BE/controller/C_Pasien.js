@@ -1,46 +1,59 @@
-
-
-
-
-import M_Pasien from '../models/M_Pasien.js';
 import { Op } from 'sequelize';
+import M_Pasien from '../models/M_Pasien.js';
+import M_Status from '../models/M_Status.js';
+
 
 class C_Pasien {
     async index(req, res) {
+
         try {
             const { name, address, status, sort, order } = req.query;
             let whereClause = {};
             let orderClause = [];
-
-            
+        
             if (name) {
                 whereClause.name = { [Op.like]: `%${name}%` };
-            }if (address) {
+            }
+            if (address) {
                 whereClause.address = { [Op.like]: `%${address}%` };
-            }if (status) {
+            }
+            if (status) {
                 whereClause.status = status;
             }
-
-            
+        
             if (sort && order) {
                 orderClause = [[sort, order.toUpperCase()]];
             }
-
+        
             const patients = await M_Pasien.findAll({
                 where: whereClause,
                 order: orderClause,
+                include: [M_Status],
             });
-
+        
             const data = {
                 message: "Menampilkan semua data Pasien",
-                data: patients,
+                data: {
+                    id: newPatient.id,
+                    name: newPatient.name,
+                    phone: newPatient.phone,
+                    address: newPatient.address,
+                    in_date_at: newPatient.in_date_at,
+                    out_date_at: newPatient.out_date_at,
+                    timestamp: newPatient.timestamp,
+                    status: {
+                        id: createdStatus.id,
+                        status: createdStatus.status,
+                    },s
+                },
             };
-
+        
             res.status(200).json(data);
         } catch (error) {
             console.error(" :", error);
             res.status(500).json({ message: "Terjadi kesalahan saat mengambil pasien", error: error.message });
         }
+        
     }
 
     async get(req, res) {
@@ -67,37 +80,64 @@ class C_Pasien {
     async store(req, res) {
         try {
             const { name, phone, address, status, in_date_at, out_date_at, timestamp } = req.body;
-
-
+        
             const requiredFields = ['name', 'phone', 'address', 'status', 'in_date_at', 'out_date_at', 'timestamp'];
             const missingFields = [];
-
+        
             requiredFields.forEach(field => {
-                if (!req.body[field]) { missingFields.push(field);}
+                if (!req.body[field]) { missingFields.push(field); }
             });
-
+        
             if (missingFields.length > 0) {
                 return res.status(422).json({
                     message: "Kesalahan Validasi",
                     errors: `Bidang wajib tidak ada: ${missingFields.join(', ')}`
                 });
             }
-
-            const newPatients = await M_Pasien.create({ 
-                name, 
-                phone, 
-                address, 
-                status, 
-                in_date_at, 
-                out_date_at, 
-                timestamp 
+        
+            // Cari atau buat status baru terlebih dahulu
+            const foundStatus = await M_Status.findOne({ where: { status: status.type } });
+        
+            let statusId;
+            if (foundStatus) {
+                // Jika status sudah ada, gunakan ID status yang sudah ada
+                statusId = foundStatus.id;
+            } else {
+                // Jika status belum ada, buat status baru
+                const newStatus = await M_Status.create({ status: status.type });
+                statusId = newStatus.id;
+            }
+        
+            // Buat pasien baru dengan status yang telah ditemukan atau dibuat
+            const newPatient = await M_Pasien.create({
+                name,
+                phone,
+                address,
+                statusId,
+                in_date_at,
+                out_date_at,
+                timestamp,
             });
+        
+            const createdStatus = await M_Status.findByPk(statusId);
 
             const data = {
                 message: `Menambahkan Pasien baru: ${name}`,
-                data: newPatients,
+                data: {
+                    id: newPatient.id,
+                    name: newPatient.name,
+                    phone: newPatient.phone,
+                    address: newPatient.address,
+                    in_date_at: newPatient.in_date_at,
+                    out_date_at: newPatient.out_date_at,
+                    timestamp: newPatient.timestamp,
+                    status: {
+                        id: createdStatus.id,
+                        status: createdStatus.status,
+                    },
+                },
             };
-
+        
             res.status(201).json(data);
         } catch (error) {
             console.error("Terjadi kesalahan saat menambahkan Pasien ke database:", error);
@@ -115,6 +155,7 @@ class C_Pasien {
                 res.status(500).json({ message: "Terjadi kesalahan saat menambahkan pasien", error: error.message });
             }
         }
+        
     }
 
     async update(req, res) {

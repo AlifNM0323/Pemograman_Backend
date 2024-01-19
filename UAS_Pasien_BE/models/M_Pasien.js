@@ -2,6 +2,8 @@
 
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
+import M_Status from './M_Status.js';
+
 
 const M_Pasien = sequelize.define('patients', {
     id: {
@@ -22,10 +24,6 @@ const M_Pasien = sequelize.define('patients', {
         type: DataTypes.TEXT,
         allowNull: false,
     },
-    status: {
-        type: DataTypes.ENUM('sembuh', 'meninggal', 'positif'),
-        allowNull: false,
-    },
     in_date_at: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -38,6 +36,17 @@ const M_Pasien = sequelize.define('patients', {
         type: DataTypes.TIME,
         allowNull: false,
     },
+    statusId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: M_Status,
+            key: 'id',
+        },
+    },
 });
+M_Pasien.belongsTo(M_Status, { foreignKey: 'statusId' });
+M_Status.hasMany(M_Pasien, { foreignKey: 'statusId' });
+
 
 export default M_Pasien;

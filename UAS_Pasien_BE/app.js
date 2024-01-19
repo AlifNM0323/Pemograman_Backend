@@ -1,4 +1,4 @@
-// app.js
+
 
 import express from "express";
 import router from "./router/api.js";
@@ -7,7 +7,7 @@ import loggerMiddleware from "./middleware/logger.js";
 
 const app = express();
 
-// Middleware setup
+
 app.use(loggerMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
