@@ -3,7 +3,7 @@ import sequelize from '../config/db.js';
 
 const M_Status = sequelize.define('status', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER, 
         primaryKey: true,
         autoIncrement: true,
     },
